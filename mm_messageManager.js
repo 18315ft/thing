@@ -3,18 +3,8 @@
 // Written by Finn Thompson - Term 1/2 2021
 /**************************************************************/
 var messageArray;
+var friends;
 var roomKey;
-
-/**************************************************************/
-// mm_draw()
-// All of the things from mm_messageManager that would be in the
-//   draw function
-// Input:  n/a
-// Return: n/a
-/**************************************************************/
-function mm_draw() {
-  document.getElementById("p_messageDisplay").innerHTML = messageArray;
-}
 
 /**************************************************************/
 // mm_sendMessage()
@@ -28,28 +18,20 @@ function mm_sendMessage() {
   if (roomKey == "home") {
     if (message != null && message != undefined && message != "") {
       document.getElementById("i_messageInput").value = "";
-      if (messageArray != null) {
-        fb_write("messages", roomKey, messageArray + userDetails.username +
-        ": " + message + "<br>");
-      } else {
-        fb_write("messages", roomKey, userDetails.username +
-        ": " + message + "<br>");
-      }
+
+      // Pushing the message to the array
+      fb_push("messages", roomKey, {name: userDetails.username,
+        icon: userDetails.icon, message: message});
     }
   } else {
     if (message != null && message != undefined && message != "") {
       document.getElementById("i_messageInput").value = "";
-      if (messageArray != null) {
-        fb_write("messages", roomKey + userDetails.uid, messageArray + userDetails.username +
-        ": " + message + "<br>");
-        fb_write("messages", userDetails.uid + roomKey, messageArray + userDetails.username +
-        ": " + message + "<br>");
-      } else {
-        fb_write("messages", roomKey + userDetails.uid, userDetails.username +
-        ": " + message + "<br>");
-        fb_write("messages", userDetails.uid + roomKey, userDetails.username +
-        ": " + message + "<br>");
-      }
+
+      // Pushing the message to the arrays
+      fb_push("messages", roomKey + userDetails.uid, {name: userDetails.username,
+        icon: userDetails.icon, message: message});
+      fb_push("messages", userDetails.uid + roomKey, {name: userDetails.username,
+        icon: userDetails.icon, message: message});
     }
   }
 }
@@ -135,7 +117,8 @@ function mm_denyFriendRequest(_uid) {
 function mm_checkFriends(_friends) {
   console.log("mm_checkFriends: _friends= " + JSON.stringify(_friends));
   document.getElementById("d_friends").innerHTML = "";
-
+  friends = _friends;
+  
   if (_friends == null) {
     console.log("no friends");
   } else {
@@ -172,17 +155,19 @@ function mm_checkFriendRequests(_friendRequests) {
 // Return: n/a
 /**************************************************************/
 function mm_changeChat(_uid) {
+  if (playing) {
+    if (!confirm("Leaving this chat will automatically make you lose. Are you sure that you want to leave?")) {
+      return;
+    }
+  }
+  
   fb_stopRead("messages", roomKey);
 
   roomKey = _uid;
 
   if (roomKey == "home") {
-  fb_readOn("messages", roomKey, function(_data) {
-            messageArray = _data;
-          });
+    fb_readOn("messages", roomKey, im_drawMessage);
   } else {
-  fb_readOn("messages", userDetails.uid + roomKey, function(_data) {
-            messageArray = _data;
-          });
+    fb_readOn("messages", userDetails.uid + roomKey, im_drawMessage);
   }
 }

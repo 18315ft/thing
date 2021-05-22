@@ -68,19 +68,20 @@ async function fb_autoLogin() {
           userDetails = await fb_read("userDetails", userDetails.uid);
           document.getElementById("p_username").textContent = userDetails.username;
 
-          fb_readOn("messages", roomKey, function(_data) {
-              messageArray = _data;
-            });
+          fb_readOn("messages", roomKey, im_drawMessage);
 
           fb_readOn("userDetails", userDetails.uid +
             "/friendRequests", mm_checkFriendRequests);
 
           fb_readOn("userDetails", userDetails.uid +
             "/friends", mm_checkFriends);
+
+          fb_readOn("userDetails", userDetails.uid + "/money", function(_data) {
+            userDetails.money = _data;
+          });
         }
       } else {
         im_showOnly("s_landingPage");
-        //fb_redirectLogin();
       }
     });
 }
@@ -123,6 +124,25 @@ function fb_write(_path, _key, _data) {
 
   if (_path != null && _path != undefined && _key != null && _key != undefined) {
     firebase.database().ref(_path + "/" + _key).set(_data,
+      function(error) {
+        if (error) {
+          console.log(error);
+        }
+      });
+  }
+}
+
+/**************************************************************/
+// fb_push(_path, _key, _data)
+// Write a specific record & key to the DB
+// Input:  path to write to, the key, data to write
+// Return: 
+/**************************************************************/
+function fb_push(_path, _key, _data) { 
+  console.log("fb_push: _path= " + _path + "  _key= " + _key + "  _data= " + _data);
+
+  if (_path != null && _path != undefined && _key != null && _key != undefined) {
+    firebase.database().ref(_path + "/" + _key).push().set(_data,
       function(error) {
         if (error) {
           console.log(error);
@@ -209,29 +229,6 @@ function fb_delete(_path, _key) {
 }
 
 /**************************************************************/
-// fb_detach(_path, _key, _data)
-// Detaches a listener from th DB
-// Input:  path & key of listener
-// Return:  
-/**************************************************************/
-async function fb_readOn(_path, _key, _return) {	
-  console.log("fb_readOn: _path= " + _path + "  _key= " + _key);
-  var data;
-
-  await firebase.database().ref(_path + "/" + _key).on("value", gotRecord, readErr);
-
-  function gotRecord(snapshot) {
-    console.log("gotRecord: snapshot.val= " + snapshot.val());
-    console.log(_return);
-    _return(snapshot.val());
-  }
-  
-  function readErr(error) {
-    console.log(error);
-  }
-}
-
-/**************************************************************/
 // fb_setAccountDetails()
 // Uploads account details to firebase
 // Input:  n/a
@@ -244,7 +241,7 @@ async function fb_setAccountDetails(_inSettings) {
   if (_inSettings) {
     tempObject.username = document.getElementById("i_settingsUsernameInput").value;
     tempObject.age = document.getElementById("i_settingsAgeInput").value;
-    tempObject.gender = document.getElementById("i_settingsGenderInput").gender;
+    tempObject.gender = document.getElementById("i_settingsGenderInput").value;
     tempObject.icon = document.getElementById("sel_settingsIcon").value;
   } else {
     tempObject.username = document.getElementById("i_usernameInput").value;
@@ -257,7 +254,6 @@ async function fb_setAccountDetails(_inSettings) {
     document.getElementById("p_usernameStatus").textContent = "Username is taken";
     return;
   }
-
   
   if (tempObject.age < 13) {
     document.getElementById("p_ageStatus").textContent = "You must be 13 or over to use this website";
@@ -273,8 +269,13 @@ async function fb_setAccountDetails(_inSettings) {
   userDetails.gender = tempObject.gender;
   userDetails.icon = tempObject.icon;
 
+  for (var i in friends) {
+    fb_write("userDetails", i + "/friends/" + userDetails.uid, {name: userDetails.username, photo: userDetails.icon});
+  }
+
   fb_write("userDetails", userDetails.uid, userDetails);
   im_hide("s_register");
+  im_hide("s_settingsPage");
 }
 
 /**************************************************************/

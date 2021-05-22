@@ -10,17 +10,17 @@ var registerPage = document.getElementById("s_register");
 var settingsPage = document.getElementById("s_settingsPage");
 
 function setup() {
-  frameRate(5);
   im_showOnly("s_gamePage");
-  canvas = createCanvas(canvasArea.offsetWidth, canvasArea.offsetHeight - 1);
+  canvas = createCanvas(canvasArea.offsetWidth, canvasArea.offsetHeight);
   canvas.parent("d_canvasArea");
+  
   
   fb_setup();
 }
 
 function draw() {
-  mm_draw();
-  //mp_draw();
+  document.getElementById("p_money").innerHTML = userDetails.money;
+  ga_draw();
 }
 
 /**************************************************************/
@@ -113,3 +113,33 @@ function im_createFriendIcon(_friend, _uid, _request) {
         + '</button>';
   }
 }
+
+
+/**************************************************************/
+// im_drawMessage(_messages)
+// Draws the messages
+// Input:  _messages
+// Return: n/a
+/**************************************************************/
+function im_drawMessage(_messages) {
+  console.log("im_drawMessage: _messages= " + JSON.stringify(_messages));
+  document.getElementById("p_messageDisplay").innerHTML = "";
+
+  for (var i in _messages) {
+    document.getElementById("p_messageDisplay").innerHTML +=
+    '<div class="d_message">' +
+    '<img src="' + _messages[i].icon + '" class="icon">' +
+    '<p class="friendName">' + _messages[i].name + '</p>' +
+    '<p style="grid-column: 2; padding-left: 5px;">' + _messages[i].message +
+    '</p></div>'
+  }
+  var objDiv = document.getElementById("p_messageDisplay");
+  objDiv.scrollTop = objDiv.scrollHeight;
+}
+/*<div class="d_message">
+          <img src="https://lh3.googleusercontent.com/a-/AOh14GhPl-fSSCemGONRGgH6bZKN6w_9vT4jtxBoCi6i=s96-c" class="icon">
+          <p class="friendName">Username</p>
+          <p style="grid-column: 2; overflow-wrap: break-word; word-wrap: break-word; hyphens: auto; white-space: normal;">
+            
+          </p>
+        </div>*/

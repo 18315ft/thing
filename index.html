@@ -32,8 +32,9 @@
 <body>
   
 <script defer src="fb_io.js"></script>
-<script defer src="mp_game.js"></script>
 <script defer src="mm_messageManager.js"></script>
+<script defer src="ga_game.js"></script>
+<script defer src="mp_game.js"></script>
 <script defer src="im_interfaceManager.js"></script>
 
 <!--Landing page-->
@@ -64,7 +65,7 @@
 <!--Game page-->
 <section id="s_gamePage">
   <div id="d_gamePageGrid">
-    <div class="w3-container darkGrey" style="grid-column-end: span 3;">
+    <div class="darkGrey" style="grid-column-end: span 3;">
       header
     </div>
 
@@ -85,17 +86,30 @@
       </div>
     </div>
     
-    <div id="d_canvasArea" style="background-color: #858585;">
+    <div id="d_gameArea">
+      <div id="d_canvasArea" style="background-color: #858585;">
+      </div>
+      <div id="d_playerButtons">
+        <label>Betting amount</label>
+        <input id="i_bettingAmount" type="number" min="1" max="5">
+        <button onclick="ga_ready()">Start Game</button>
+        <button onclick="ga_hit()">Hit</button>
+        <button onclick="ga_end()">Stand</button>
+        <p id="p_blackjackOutput"></p>
+        <p id="p_money"></p>
+      </div>
     </div>
 
     <div id="d_messagesGrid" class="grey">
-      <p id="p_messageDisplay" style="grid-column-end: span 2;"></p>
+      <div id="p_messageDisplay" style="grid-column-end: span 2; overflow: auto;">
+
+        
+      </div>
       <input type="text" id="i_messageInput" onkeypress="mm_keyPressed()">
       <button onclick="mm_sendMessage()">Send</button>
     </div>
 
     <div class="darkGrey" style="grid-column-end: span 3; padding: 10px;">
-      <button onclick="fb_redirectLogin()">login</button>
       <button onclick="fb_logout()">logout</button>
       <button onclick="im_show('s_settingsPage')">Settings</button>
       <p id="p_username" style="display: inline"></p>
@@ -174,6 +188,15 @@
         <input id="i_settingsAgeInput" type="number">
         <p id="p_ageStatus"></p>
       </div>
+
+      <div>
+        <label>Profile Picture</label>
+        <select id="sel_settingsIcon">
+          <option value="google">Google Icon</option>
+          <option value="img_granny.jpg">
+            Granny</option>
+        </select>
+      </div>
       
       <button id="b_changeDetails" onclick="fb_setAccountDetails(true)">Change details</button>
     </div>
@@ -181,57 +204,6 @@
     <div class="grey" style="opacity: 0.8;"></div>
   </div>
 </section>
-
-<!--
-  <section id="s_landingPage">
-    <div class="hHeight w3-container">
-      <h1>Landing Page</h1>
-    </div>
-
-    <div class="w3-row gHeight">
-      <div class="w3-col m4 w3-red w3-container gHeight">
-        <button onclick="changePage()" class="w3-button w3-green">Go to game page</button>
-      </div>
-      
-      <div class="w3-col m8 w3-orange w3-container gHeight">
-        asd
-      </div>
-    </div>
-  </section>
-
-  <section id="s_gamePage">
-    <div class="hHeight w3-container">
-      <h1>Game Page</h1>
-    </div>
-
-    <div class="w3-row gHeight">
-      <div class="w3-col m4 w3-green w3-container gHeight">
-        <button onclick="changePage()" class="w3-button w3-green">Go back</button>
-        <p>first third</p>
-      </div>
-      
-      <div class="w3-col m8 w3-red w3-container gHeight">
-        <div id="d_gameArea"></div>
-      </div>
-    </div>
-  </section>
-
-  <section id="s_helpPage">
-    <div class="hHeight w3-container">
-      <h1>Help Page</h1>
-    </div>
-
-    <div class="w3-row gHeight">
-      <div class="w3-col m4 w3-green w3-container gHeight">
-        <p>first third</p>
-      </div>
-      
-      <div class="w3-col m8 w3-red w3-container gHeight">
-        <div id="d_gameArea"></div>
-      </div>
-    </div>
-  </section>
--->
 
   <!--*************************************************************
 			ADMIN PAGE 
