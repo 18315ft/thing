@@ -155,7 +155,6 @@ function mm_checkFriendRequests(_friendRequests) {
 // Return: n/a
 /**************************************************************/
 async function mm_changeChat(_uid) {
-  console.log("mm_changeChat(): _uid= " + _uid + " roomKey= " + roomKey);
   if (playing) {
     if (!confirm("Leaving this chat will automatically make you lose. Are you sure that you want to leave?")) {
       return;
@@ -164,10 +163,6 @@ async function mm_changeChat(_uid) {
   }
 
   fb_stopRead("messages", roomKey);
-
-  // Removing the activePerson class from the old active person and adding it to the new
-  document.getElementById(roomKey).classList.remove("activePerson");
-  document.getElementById(_uid).classList.add("activePerson");
 
   roomKey = _uid;
 

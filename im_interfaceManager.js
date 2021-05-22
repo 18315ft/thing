@@ -18,9 +18,9 @@ function setup() {
   fb_setup();
 }
 
-async function draw() {
+function draw() {
   document.getElementById("p_money").innerHTML = "$" + userDetails.money;
-  await ga_draw();
+  ga_draw();
 }
 
 /**************************************************************/
@@ -109,7 +109,7 @@ function im_createFriendIcon(_friend, _uid, _request) {
     document.getElementById("d_friends").innerHTML +=
         '<button class="d_friendIconGrid" onclick="mm_changeChat(' + "'" + _uid + "'" + ')" id="' + _uid + '">'
         + '<img src=' + _friend.photo + ' class="icon">'
-        + '<p class="friendName" style="grid-column: 2; grid-row-end: 1;">' + _friend.name + '</p>'
+        + '<p class="friendName">' + _friend.name + '</p>'
         + '</button>';
 
     if (_friend.playing) {

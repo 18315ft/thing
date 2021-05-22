@@ -38,15 +38,17 @@ function ga_startGame() {
   // If the player is playing online it will read the opponents game data
   if (roomKey != "home") {
     fb_readOn("userDetails", roomKey + "/game", function(_data) {
-      opponent = _data;
+      if (_data != null) {
+        opponent = _data;
+      }
     });
     fb_write("userDetails", roomKey + "/friends/" + userDetails.uid + "/playing", true);
     fb_write("userDetails", userDetails.uid + "/game/stage", 0);
   }
 
-  // If it the players first time playing it willl give the player $100
-  if (userDetails.money == undefined) {
-    userDetails.money = 100;
+  // If it the players first time playing it willl give the player $10
+  if (userDetails.money < 1) {
+    userDetails.money = 10;
   }
   im_hide("stage2");
   im_show("stage0");
@@ -92,9 +94,8 @@ function ga_draw() {
           opponent.bettingAmount == bettingAmount) {
         /* If the players have both got the same betting amount and have
              both said that they are ready*/
-        if (roomKey != "home") {
-          fb_write("userDetails", userDetails.uid + "/money", userDetails.money - bettingAmount);
-        }
+        userDetails.money -= bettingAmount;
+        fb_write("userDetails", userDetails.uid + "/money", userDetails.money);
 
         im_hide("stage0");
         im_show("stage1");
@@ -105,6 +106,9 @@ function ga_draw() {
     } else if (stage == 1) {
       // During the hitting stage
       if (roomKey == "home") {
+        while (opponent.cardAmount < 17) {
+          opponent.cardAmount += ga_getCard();
+        }
         opponent.stage = 2;
       }
       
@@ -184,23 +188,20 @@ function ga_stand() {
 // Return:  n/a
 /**************************************************************/
 async function ga_endGame() {
-  //Making the computer hit / stand or reading the opponents cards
-  if (roomKey == "home") {
-    while (opponent.cardAmount < 17) {
-      opponent.cardAmount += ga_getCard();
-    }
-  }
-
   //winning and losing
   if (playerCardAmount > 21) { // Busting
 
   } else if (opponent.cardAmount > 21) { // Computer busting
+    console.log("opponent bust Player= " + playerCardAmount + " Opponent= " + opponent.cardAmount);
     fb_write("userDetails", userDetails.uid + "/money", (userDetails.money + 2 * bettingAmount));
   } else if (opponent.cardAmount == playerCardAmount) { // Tieing
+    console.log("tie Player= " + playerCardAmount + " Opponent= " + opponent.cardAmount);
     fb_write("userDetails", userDetails.uid + "/money", (userDetails.money + bettingAmount));
   } else if (opponent.cardAmount > playerCardAmount) { // Losing
+    console.log("lost Player= " + playerCardAmount + " Opponent= " + opponent.cardAmount);
     
   } else if (playerCardAmount > opponent.cardAmount) { // Winning
+    console.log("won Player= " + playerCardAmount + " Opponent= " + opponent.cardAmount);
     fb_write("userDetails", userDetails.uid + "/money", (userDetails.money + 2 * bettingAmount));
   }
 
