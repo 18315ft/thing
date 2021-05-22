@@ -10,243 +10,74 @@
 html, body {
   margin: 0px;
   padding: 0px;
-  font-family: 'Roboto', sans-serif;
+  font-family: Helvetica;
   color: var(--mainTextCol);
 }
 
-p {
-  margin-top: 0em;
-  margin-bottom: 0em;
+.normalDiv {
+  content: "";
+  display: table;
+  clear: both;
 }
 
 canvas {
   display: block;
 }
 
+#s_gamePage {
+  display: block;
+  height: 100vh;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 300px auto 400px;
+  grid-template-rows: 100px auto 50px;
+  height: 100vh;
+}
+
+.messagesGrid {
+  display: grid;
+  grid-template-columns: auto min-content;
+  grid-template-rows: auto 30px;
+}
+
+.darkGrey {
+  background-color: #525252;
+}
+
+.grey {
+  background-color: #5e5e5e;
+}
+
 input {
-  background-color: #2b2c2e;
-  height: 2em;
-  border: 0;
-  margin: auto 3px;
-  color: var(--mainTextCol);
-  border-radius: 1em;
+  background-color: #424242;
+  width: inherit;
+  height: 30px;
+  border-radius: 30px;
 }
 
 button {
   width: fit-content;
-  background-color: #2b2c2e;
+  background-color: #333333;
   color: var(--mainTextCol);
-  padding: 0.5em 1em;
-  margin: 3px;
-  
-  border-radius: 1.5em;
-
-  border: 0px solid transparent;
-}
-
-button:hover {
-  background-color: #252426;;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Roboto', sans-serif;
-}
-
-h1 {
-  font-size: 50px;
-  font-weight: 700;
-  text-align: center;
-}
-
-.darkGrey {
-  background-color: #414246;
-}
-
-.grey {
-  background-color: #4c4d52;
+  padding: 3px;
 }
 
 /*************************************************************
-/*    Landing page stuff
+/*    Sidebar stuff
 *************************************************************/
-#s_landingPage {
-  height: 100vh;
-  display: none;
-}
-
-#d_landingPageGrid {
-  display: grid;
-  grid-template-columns: 50% 50%;
-  height: 100vh;
+#b_home {
+  background-color: rgba(0, 0, 0, 0);
+  border: none;
 }
 
 /*************************************************************
-/*    Game page stuff
-*************************************************************/
-#s_gamePage {
-  height: 100vh;
-  display: none;
-}
-
-#d_gamePageGrid {
-  display: grid;
-  grid-template-columns: 200px auto 400px;
-  grid-template-rows: auto minmax(0, 1fr) auto;
-  height: 100vh;
-}
-
-#d_messagesGrid {
-  display: grid;
-  grid-template-columns: auto min-content;
-  grid-template-rows: auto min-content;
-}
-
-.d_message {
-  display: grid;
-  grid-template-columns: 40px auto;
-  grid-template-rows: 20px auto;
-  margin: 3px;
-}
-
-#d_userDetails {
-  display: inline-grid;
-  grid-template-columns: 40px auto;
-  grid-template-rows: 20px 20px;
-  margin: 3px;
-  vertical-align: middle;
-}
-
-/*    Sidebar stuff    */
-.d_friendIconGrid {
-  display: grid;
-  grid-template-columns: 40px auto;
-  grid-template-rows: 20px 20px;
-  width: -webkit-fill-available;
-  margin: 3px;
-  padding: 0px;
-
-  background-color: #0000;
-}
-
-.activePerson {
-  background-color: #39393b;
-}
-
-.icon {
-  width: 30px;
-  height: 30px;
-  border-radius: 100%;
-  margin: 5px;
-}
-
-.friendName {
-  color: #dbdbdb;
-  padding-left: 5px;
-  margin: auto 0px;
-  text-align: left;
-  font-size: 16px;
-  grid-column: 2;
-  grid-row-start: 1;
-  grid-row-end: 3;
-}
-
-.moneyDisplay {
-  color: #dbdbdb;
-  padding-left: 5px;
-  font-size: 13px;
-  grid-column: 2;
-}
-
-.friendRequestButton {
-  padding-top: 2px;
-  padding-bottom: 0px;
-  font-size: 11px;
-}
-
-/*************************************************************
-/*    Register page stuff
-*************************************************************/
-#s_register {
-  position: fixed;
-  display: none;
-  top: 5vh;
-  left: 5vw;
-}
-
-#d_registerGrid {
-  display: grid;
-  grid-template-columns: auto 500px auto;
-  grid-template-rows: auto;
-  height: 90vh;
-  width: 90vw;
-}
-
-/*************************************************************
-/*    Settings page stuff
+/*    Settings stuff
 *************************************************************/
 #s_settingsPage {
+  display: none;
   position: fixed;
-  display: none;
-  top: 5vh;
-  left: 5vw;
-}
-
-#d_settingsGrid {
-  display: grid;
-  grid-template-columns: auto 500px auto;
-  grid-template-rows: auto;
-  height: 90vh;
-  width: 90vw;
-}
-/*************************************************************
-/*    Admin page and button styling
-*************************************************************/
-#s_adminPage {
-  display: none;
-  height: 86vh;
-  overflow: scroll;
-}
-
-#b_lpAdmin {
-  display: none;   /* none = don't display element */
-}
-
-#b_gpAdmin {
-  display: none;   /* none = don't display element */
-}
-
-/* width */
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-  background: #4c4d52;
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: #414246;
-  border-radius: 5px;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #464646;
-}
-
-/* The number input*/
-/* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* Firefox */
-input[type=number] {
-  -moz-appearance: textfield;
 }
 /*************************************************************
 /*    END OF CSS

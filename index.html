@@ -9,8 +9,7 @@
   <meta name="author" content="????">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- stylesheets ------------------------------------------------------------------>
-  <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   <link rel="stylesheet" href="style.css">
   <!-- P5.js ------------------------------------------------------------------------>
@@ -19,11 +18,11 @@
 
   <!-- firebase start --------------------------------------------------------------->
   <!-- Firebase App (core Firebase SDK) is always required & must be listed 1st -->
-  <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>
   <!-- Add Firebase products that you want to use -->
-  <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-database.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-analytics.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-analytics.js"></script>
   <!-- firebase end ----------------------------------------------------------------->
 </head>
 
@@ -31,255 +30,119 @@
 //  BODY
 *********************************************************************************-->
 <body>
-  
+
 <script defer src="fb_io.js"></script>
-<script defer src="mm_messageManager.js"></script>
-<script defer src="ga_game.js"></script>
 <script defer src="mp_game.js"></script>
+<script defer src="mm_messageManager.js"></script>
 <script defer src="im_interfaceManager.js"></script>
+<!--
 
-<!--Landing page-->
-<section id="s_landingPage">
-  <div id="d_landingPageGrid">
-    <div class="grey">
-      <h1>
-        How to play
-      </h1>
+<button onclick="mp_sendMessage()">Message</button>
+<button onclick="mp_clearMessages()">Clear Messages</button>
 
-      <p style="font-size: 20px; font-weight: 300; margin: 20px">
-        The aim of blackjack is to win. After you press Play the game begins. You select
-        the amount that you would like to bet. If you are playing against another person,
-        you must select the same amount in order to continue the game. After the betting
-        begins the hitting stage.<br><br>
+<p id="p_messages"></p>
 
-        You are given two cards at the start of the hitting round. You can get additional
-        cards by hitting. The aim of this part is to get the sum of your cards as close to
-        21 as you can without going over it. If you go over you 'bust' and immediatly lose
-        and the game is over. If you are happy with the sum of your cards, stand to show
-        that you want to finish the game. After both you and your opponent have stood, your
-        cards are reveiled to the opponent and the winner gets the prize.
-      </p>
-    </div>
-    <div class="darkGrey">
-      <h1>
-        Blackjack
-      </h1>
+<input type="text" id="i_roomCode">
 
-      <div style="width: fit-content; margin: 20% auto;">
-        <button onclick="fb_redirectLogin()" style="width: 100%; padding: 0.5em 1em; font-size: 25px;">
-          Register with google
-        </button>
-        <br>
+<button onclick="mp_redirectLogin()">Login</button>
 
-        <button onclick="fb_redirectLogin()" style="width: 100%; padding: 0.5em 1em; font-size: 25px;">
-          Sign in
-        </button>
-      </div>
-    </div>
-  </div>
-</section>
+<button onclick="fb_logout()">Log out</button>
 
+<p id="p_username"></p>-->
 <!--Game page-->
 <section id="s_gamePage">
-  <div id="d_gamePageGrid">
-    <div id="d_header" class="darkGrey" style="grid-column-end: span 3; padding: 10px; font-size: 25px">
-      Home
+  <div class="grid">
+    <div class="w3-container darkGrey" style="grid-column-end: span 3;">
+      header
     </div>
 
-    <div id="d_sideBar" class="grey">
-      <button class="d_friendIconGrid" onclick="mm_changeChat('home')" id="home">
-        <img src="homeIcon.png" class="icon">
-        <p class="friendName">Home</p>
-      </button>
-      <br>
-
-      <input type="text" id="i_findFriend">
-      <button onclick="mm_sendFriendRequest()">Send friend request</button>
-      <div id="d_friendRequests">
-
+    <div class="grey">
+      <div class="normalDiv">
+        <img src="https://lh3.googleusercontent.com/proxy/4aPs71fdVvRvXQ1IZGjb941Ha8WbKWaOFITC7ctQkhxrnN3_a5Oo_BKKJAK5tMb61I7UeQ75Vx2C6XdRhE9wrEENI6hxxoIy9c_kvv-of9mjEXhH0j2d-AFE788LBriGCC59Wk9T01HzfarkLJHoJsc" style="width: 30px; height: 30px; border-radius: 100%; float: left; margin: 5px;">
+        <div style="margin-top: auto; margin-bottom: auto;">
+          <p style="margin-top: auto; margin-bottom: auto;">Home</p>
+        </div>
       </div>
-      <div id="d_friends">
+      
+      <p>Room key</p>
+      <input type="text" id="i_roomCode">
 
-      </div>
+      
     </div>
     
-    <div id="d_gameArea">
-      <div id="d_canvasArea" style="background-color: #38393c;">
-      </div>
-      <div id="d_playerButtons" style="background-color: #38393c;">
-        <button onclick="ga_startGame()">Play</button>
-        <div id="stage0" style="display: none;">
-          <label>Betting amount</label>
-          <input id="i_bettingAmount" type="number" min="1" max="5">
-          <p>Your opponent is betting</p>
-          <p id="p_opponentBetting">0</p>
-          <button onclick="ga_bet()">Bet</button>
-        </div>
-
-        <div id="stage1" style="display: none;">
-          <button onclick="ga_hit()">Hit</button>
-          <button onclick="ga_stand()">Stand</button>
-          <p>Your cards are</p>
-          <p id="p_playerCards">0</p>
-        </div>
-
-        <div id="stage2" style="display: none;">
-          <p>The opponents cards were</p>
-          <p id="p_opponentsCards">0</p>
-          <p>Your cards were</p>
-          <p id="p_playerCardsEnd">0</p>
-        </div>
-
-      </div>
+    <div id="d_canvasArea" style="background-color: #858585;">
     </div>
 
-    <div id="d_messagesGrid" class="grey">
-      <div id="p_messageDisplay" style="grid-column-end: span 2; overflow: auto;">
-
-        
-      </div>
-      <input type="text" id="i_messageInput" onkeypress="mm_keyPressed()">
-      <!--https://css-tricks.com/auto-growing-inputs-textareas/ for incase I want to
-       have the input expand to accomadate more text-->
+    <div class="grey messagesGrid">
+      <p id="p_messageDisplay" style="grid-column-end: span 2;"></p>
+      <input type="text" id="i_messageInput" onkeypress="mm_enterPressed()">
       <button onclick="mm_sendMessage()">Send</button>
     </div>
 
-    <div class="darkGrey" style="grid-column-end: span 3;">
-      <div id="d_userDetails">
-        <img src="homeIcon.png" id="img_userImage" class="icon">
-        <p id="p_username" class="friendName" style="grid-row-end: 1;"></p>
-        <p id="p_money" class="moneyDisplay">0</p>
-      </div>
-
-      <button onclick="im_show('s_settingsPage')" style="margin: 7px 2px;">Settings</button>
+    <div class="darkGrey" style="grid-column-end: span 3; padding: 10px;">
+      <button onclick="fb_redirectLogin()">login</button>
+      <button onclick="fb_logout()">logout</button>
     </div>
-  </div>
-</section>
-
-<!--Register page-->
-<section id="s_register">
-  <div id="d_registerGrid">
-    <div class="grey" style="opacity: 0.8;"></div>
-
-    <div class="darkGrey" style="padding: 5px;">
-      <p style="font-size: 50px;">Sign up</p>
-      <br>
-
-      <div>
-        <label>Username</label>
-        <input id="i_usernameInput">
-        <p id="p_usernameStatus"></p>
-      </div>
-      <br>
-
-      <div>
-        <label>Gender</label>
-        <input id="i_genderInput">
-      </div>
-      <br>
-
-      <div>
-        <label>Age</label>
-        <input id="i_ageInput" type="number">
-        <p id="p_ageStatus"></p>
-      </div>
-
-      <div>
-        <label>Profile Picture</label>
-        <select id="sel_icon">
-          <option value="google">Google Icon</option>
-          <option value="img_granny.jpg">
-            Granny</option>
-        </select>
-      </div>
-
-      <button id="b_signUp" onclick="fb_setAccountDetails()">Sign up</button>
-    </div>
-    
-    <div class="grey" style="opacity: 0.8;"></div>
   </div>
 </section>
 
 <!--Settings page-->
 <section id="s_settingsPage">
-  <div id="d_settingsGrid">
-    <div class="grey" style="opacity: 0.8;"></div>
-
-    <div class="darkGrey" style="padding: 5px;">
-      <p style="font-size: 50px;">Change details</p>
-      <br>
-
-      <div>
-        <label>Username</label>
-        <input id="i_settingsUsernameInput">
-        <p id="p_usernameStatus"></p>
-      </div>
-      <br>
-
-      <div>
-        <label>Gender</label>
-        <input id="i_settingsGenderInput">
-      </div>
-      <br>
-
-      <div>
-        <label>Age</label>
-        <input id="i_settingsAgeInput" type="number">
-        <p id="p_ageStatus"></p>
-      </div>
-
-      <div>
-        <label>Profile Picture</label>
-        <select id="sel_settingsIcon">
-          <option value="google">Google Icon</option>
-          <option value="img_granny.jpg">
-            Granny</option>
-        </select>
-      </div>
-      
-      <button id="b_changeDetails" onclick="fb_setAccountDetails(true)">Change details</button>
-
-      <button onclick="im_hide('s_settingsPage')">Close</button>
-      
-      <button onclick="fb_logout()" style="margin: 7px 2px;">logout</button>
-    </div>
-    
-    <div class="grey" style="opacity: 0.8;"></div>
-  </div>
+<div>
 </section>
 
-  <!--*************************************************************
-			ADMIN PAGE 
-  **************************************************************-->
-  <section id="s_adminPage" class="w3-grey">
-    <div class="w3-row">
-      <div class="w3-container w3-grey w3-col m10">
-        <h1 class="w3-wide">Admin page</h1>
+<!--
+  <section id="s_landingPage">
+    <div class="hHeight w3-container">
+      <h1>Landing Page</h1>
+    </div>
+
+    <div class="w3-row gHeight">
+      <div class="w3-col m4 w3-red w3-container gHeight">
+        <button onclick="changePage()" class="w3-button w3-green">Go to game page</button>
+      </div>
+      
+      <div class="w3-col m8 w3-orange w3-container gHeight">
+        asd
       </div>
     </div>
-    
-    <nav id="n_admin" class="w3-bar stickyNav">
-      <button id="b_adHome" class="w3-button w3-block w3-col m3 
-                                   w3-medium w3-ripple w3-border" 
-              onclick="ad_home()" value="Submit">home
-	  </button>
-      <button id="b_adUser" class="w3-button w3-block w3-col m3 
-                                   w3-medium w3-ripple w3-small w3-border" 
-              onclick="ad_user()" value="Submit">users
-      </button>
-      <button id="b_adBB" class="w3-button w3-block w3-col m3 
-                                 w3-medium w3-ripple w3-small w3-border" 
-              onclick="ad_BB()" value="Submit">BB
-      </button>
-    </nav>
-      
-    <div>
-      <div id="d_admin" class="w3-table-all w3-small w3-light-grey 
-                               w3-hoverable w3-border w3-bordered content">
-	    <table id="t_userData"></table>
-	  </div>
+  </section>
+
+  <section id="s_gamePage">
+    <div class="hHeight w3-container">
+      <h1>Game Page</h1>
     </div>
-  </section> 
+
+    <div class="w3-row gHeight">
+      <div class="w3-col m4 w3-green w3-container gHeight">
+        <button onclick="changePage()" class="w3-button w3-green">Go back</button>
+        <p>first third</p>
+      </div>
+      
+      <div class="w3-col m8 w3-red w3-container gHeight">
+        <div id="d_gameArea"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="s_helpPage">
+    <div class="hHeight w3-container">
+      <h1>Help Page</h1>
+    </div>
+
+    <div class="w3-row gHeight">
+      <div class="w3-col m4 w3-green w3-container gHeight">
+        <p>first third</p>
+      </div>
+      
+      <div class="w3-col m8 w3-red w3-container gHeight">
+        <div id="d_gameArea"></div>
+      </div>
+    </div>
+  </section>
+-->
+
+
 
 
 
