@@ -61,8 +61,8 @@ async function fb_autoLogin() {
         userRegistered = await fb_checkForUserUID(userDetails.uid);
 
         if (userRegistered == false) {
-          console.log("user not registered");
-          im_showOnly("s_landingPage");
+          console.log("user not signed in");
+          im_show("s_register");
         } else {
           console.log("user registered");
           userDetails = await fb_read("userDetails", userDetails.uid);
@@ -93,19 +93,13 @@ async function fb_autoLogin() {
 // Input:  n/a
 // Return: n/a
 /**************************************************************/
-async function fb_redirectLogin() {
+function fb_redirectLogin() {
   console.log("fb_redirectLogin");
-
   firebase.auth().onAuthStateChanged(newLogin);
   
   function newLogin(user) {
-    if (user) {
-      im_showOnly("s_gamePage");
-      im_show("s_register");
-    } else {
-      var provider = new firebase.auth.GoogleAuthProvider();
-      firebase.auth().signInWithRedirect(provider);
-    }
+    var provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().signInWithRedirect(provider);
   }
 }
 
@@ -278,10 +272,6 @@ async function fb_setAccountDetails(_inSettings) {
 
   for (var i in friends) {
     fb_write("userDetails", i + "/friends/" + userDetails.uid, {name: userDetails.username, photo: userDetails.icon});
-  }
-
-  if (!_inSettings) {
-    fb_autoLogin();
   }
 
   fb_write("userDetails", userDetails.uid, userDetails);
