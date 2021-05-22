@@ -3,7 +3,8 @@
 // Written by Finn Thompson - Term 1/2 2021
 /**************************************************************/
 var canvas;
-var canvasArea = document.getElementById("d_canvasArea");;
+var canvasArea = document.getElementById("d_canvasArea");
+var landingPage = document.getElementById("s_landingPage");
 var gamePage = document.getElementById("s_gamePage");
 var registerPage = document.getElementById("s_register");
 var settingsPage = document.getElementById("s_settingsPage");
@@ -15,8 +16,6 @@ function setup() {
   canvas.parent("d_canvasArea");
   
   fb_setup();
-
-  roomKey = "testGame/" + document.getElementById("i_roomCode").value;
 }
 
 function draw() {
@@ -25,9 +24,9 @@ function draw() {
 }
 
 /**************************************************************/
-// im_hide()
-// Hides all pages
-// Input:  n/a
+// im_hide(_id)
+// Hides the section with _id
+// Input:  The section to hide
 // Return: n/a
 /**************************************************************/
 function im_hide(_id) {
@@ -37,12 +36,14 @@ function im_hide(_id) {
 
 /**************************************************************/
 // im_hideAll()
-// Hides all pages
+// Hides all sections
 // Input:  n/a
 // Return: n/a
 /**************************************************************/
 function im_hideAll() {
   console.log("im_hideAll");
+
+  landingPage.style.display = "none";
   gamePage.style.display = "none";
   registerPage.style.display = "none";
   settingsPage.style.display = "none";
@@ -50,7 +51,7 @@ function im_hideAll() {
 
 /**************************************************************/
 // im_show(_id, _displayType)
-// Shows _id
+// Shows the section with _id using _displayType
 // Input:  _id, _displayType
 // Return: n/a
 /**************************************************************/
@@ -65,7 +66,7 @@ function im_show(_id, _displayType) {
 
 /**************************************************************/
 // im_showOnly(_id, _displayType)
-// Hides all except for _id
+// Hides all sections except for _id and shows _id with _displayType
 // Input:  _id, _displayType
 // Return: n/a
 /**************************************************************/
@@ -80,31 +81,35 @@ function im_showOnly(_id, _displayType) {
 }
 
 /**************************************************************/
-// im_createFriendIcon(_name, _request)
-// Creates a icon for the user with _name
-// Input:  _name
+// im_createFriendIcon(_friend, _uid, _request)
+// Creates an icon for the user with _uid. Uses _friend to show
+//   name and photo. If _request is true then the icon will have
+//   accept and deny friend request buttons
+// Input:  _friend, _uid, _request
 // Return: n/a
 /**************************************************************/
-async function im_createFriendIcon(_name, _uid, _request) {
-  console.log("im_createFriendIcon: _name= " + _name + " _request= " + _request);
-  var sideBar = document.getElementById("d_sideBar");
+function im_createFriendIcon(_friend, _uid, _request) {
+  console.log("im_createFriendIcon: _friend= " + JSON.stringify(_friend) + " _uid= " + _uid
+      + " _request= " + _request);
 
   if (_request == true) {
-    sideBar.innerHTML += '<div class="d_friendIconGrid">'
-      + '<img src="homeIcon.png" class="icon" style="grid-row-end: span 2;">'
-      + '<p class="friendName">' + _name + '</p> <div>'
-      + '<button class="friendRequestButton" onclick="mm_acceptFriendRequest(' + "'" + _uid + "'" + ')">Accept</button>'
-      + '<button class="friendRequestButton" onclick="mm_denyFriendRequest(' + "'" + _uid + "'" + ')">Deny</button> </div> </div>';
+    // If the icon to be created is a friend request icon then it will create the
+    //   icon with accept and deny buttons
+    document.getElementById("d_friendRequests").innerHTML +=
+        '<div class="d_friendRequestIconGrid">'
+        + '<img src=' + _friend.photo + ' class="icon">'
+        + '<p class="friendName">' + _friend.name + '</p> <div style="height: 22px; grid-column: 2;">'
+        + '<button class="friendRequestButton" onclick="mm_acceptFriendRequest(' + "'"
+          + _uid  + "', '" + _friend.name + "', '" + _friend.photo + "'" + ')">Accept</button>'
+        + '<button class="friendRequestButton" onclick="mm_denyFriendRequest('
+          + "'" + _uid  + "'" + ')">Deny</button> </div> </div>';
   } else {
-    sideBar.innerHTML += '<div class="d_friendIconGrid">'
-        + '<img src="homeIcon.png" class="icon" style="grid-row-end: span 2;">'
-        + '<p class="friendName">' + _name + '</p>'
-      + '</div>';
+    // If this icon to be created isn't a friend request it will be a button
+    //   with the change chat function
+    document.getElementById("d_friends").innerHTML +=
+        '<button class="d_friendIconGrid" onclick="mm_changeChat(' + "'" + _uid + "'" + ')">'
+        + '<img src=' + _friend.photo + ' class="icon">'
+        + '<p class="friendName">' + _friend.name + '</p>'
+        + '</button>';
   }
 }
-/*
-      <div class="d_friendIconGrid">
-        <img src="homeIcon.png" class="icon" style="grid-row-end: span 2;">
-        <p class="friendName">Friend Name</p>
-        <p class="lastOnline">Online: 10/10/10 - 12:00 am</p>
-      </div>*/

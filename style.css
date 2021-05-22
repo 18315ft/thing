@@ -47,6 +47,19 @@ button {
 }
 
 /*************************************************************
+/*    Landing page stuff
+*************************************************************/
+#s_landingPage {
+  height: 100vh;
+}
+
+#d_landingPageGrid {
+  display: grid;
+  grid-template-columns: auto auto;
+  height: 100vh;
+}
+
+/*************************************************************
 /*    Game page stuff
 *************************************************************/
 #s_gamePage {
@@ -66,33 +79,59 @@ button {
   grid-template-rows: auto 30px;
 }
 
-.vertCent {
-  position: absolute;
-  padding-top: 100%;
-  padding-bottom: 100%;
-}
-
 /*    Sidebar stuff    */
 .d_friendIconGrid {
   display: grid;
   grid-template-columns: 40px auto;
-  grid-template-rows: auto auto;
   height: 40px;
-  margin-top: 5px;
+  width: 100%;
+  margin: 3px;
+  padding: 0px;
+  border-radius: 40px;
+
+  background-color: #5e5e5e;
+  box-shadow: 0px 0px 0px transparent;
+  border: 0px solid transparent;
+  text-shadow: 0px 0px 0px transparent;
+}
+
+.d_friendIconGrid:hover {
+  background-color: #494949;
+}
+
+.d_friendRequestIconGrid {
+  display: grid;
+  grid-template-columns: 40px auto;
+  grid-template-rows: 20px 20px;
+  height: 40px;
+  width: 100%;
+  margin: 3px;
+  padding: 0px;
+  border-radius: 40px;
+
+  background-color: #5e5e5e;
+  box-shadow: 0px 0px 0px transparent;
+  border: 0px solid transparent;
+  text-shadow: 0px 0px 0px transparent;
+}
+
+.d_friendRequestIconGrid:hover {
+  background-color: #494949;
 }
 
 .icon {
   width: 30px;
   height: 30px;
   border-radius: 100%;
-  float: left;
   margin: 5px;
 }
 
 .friendName {
   padding-left: 5px;
-  vertical-align: bottom;
-  font-size: 14px;
+  margin-top: auto;
+  margin-bottom: auto;
+  text-align: left;
+  font-size: 16px;
 }
 
 .lastOnline {
@@ -101,12 +140,12 @@ button {
 }
 
 .friendRequestButton {
-  display: inline;
   vertical-align: top;
   padding-top: 2px;
   padding-bottom: 0px;
   font-size: 11px;
 }
+
 /*************************************************************
 /*    Register page stuff
 *************************************************************/
@@ -131,6 +170,23 @@ button {
   position: fixed;
   top: 5vh;
   left: 5vw;
+}
+
+/*************************************************************
+/*    Admin page and button styling
+*************************************************************/
+#s_adminPage {
+  display: none;
+  height: 86vh;
+  overflow: scroll;
+}
+
+#b_lpAdmin {
+  display: none;   /* none = don't display element */
+}
+
+#b_gpAdmin {
+  display: none;   /* none = don't display element */
 }
 
 /*************************************************************

@@ -2,7 +2,8 @@
 // mm_messageManager.js
 // Written by Finn Thompson - Term 1/2 2021
 /**************************************************************/
-var messageArray
+var messageArray;
+var roomKey;
 
 /**************************************************************/
 // mm_draw()
@@ -12,7 +13,6 @@ var messageArray
 // Return: n/a
 /**************************************************************/
 function mm_draw() {
-  roomKey = "testGame/" + document.getElementById("i_roomCode").value;
   document.getElementById("p_messageDisplay").innerHTML = messageArray;
 }
 
@@ -25,14 +25,31 @@ function mm_draw() {
 function mm_sendMessage() {
   var message = document.getElementById("i_messageInput").value;
 
-  if (message != null && message != undefined && message != "") {
-    document.getElementById("i_messageInput").value = "";
-    if (messageArray != null) {
-      fb_write(roomKey, "messages", messageArray + userDetails.username +
-       ": " + message + "<br>");
-    } else {
-      fb_write(roomKey, "messages", userDetails.username +
-       ": " + message + "<br>");
+  if (roomKey == "home") {
+    if (message != null && message != undefined && message != "") {
+      document.getElementById("i_messageInput").value = "";
+      if (messageArray != null) {
+        fb_write("messages", roomKey, messageArray + userDetails.username +
+        ": " + message + "<br>");
+      } else {
+        fb_write("messages", roomKey, userDetails.username +
+        ": " + message + "<br>");
+      }
+    }
+  } else {
+    if (message != null && message != undefined && message != "") {
+      document.getElementById("i_messageInput").value = "";
+      if (messageArray != null) {
+        fb_write("messages", roomKey + userDetails.uid, messageArray + userDetails.username +
+        ": " + message + "<br>");
+        fb_write("messages", userDetails.uid + roomKey, messageArray + userDetails.username +
+        ": " + message + "<br>");
+      } else {
+        fb_write("messages", roomKey + userDetails.uid, userDetails.username +
+        ": " + message + "<br>");
+        fb_write("messages", userDetails.uid + roomKey, userDetails.username +
+        ": " + message + "<br>");
+      }
     }
   }
 }
@@ -67,50 +84,57 @@ function mm_keyPressed() {
 /**************************************************************/
 async function mm_sendFriendRequest() {
   var friend = {username: document.getElementById("i_findFriend").value};
-
-  if (fb_checkForUsername(friend.username)) {
-    console.log("friend found");
     friend = await fb_getDetailsOfUsername(friend.username);
-    fb_write("userDetails", userDetails.uid + "/friends/" + friend.uid, friend.username);
-    fb_write("userDetails", friend.uid + "/friendRequests/" + userDetails.uid, userDetails.username);
-    console.log(JSON.stringify(userDetails));
+
+  if (friend.uid) {
+    console.log("friend found");
+    fb_write("userDetails", userDetails.uid + "/friends/" + friend.uid,
+     {name: friend.username, photo: friend.icon});
+     
+    fb_write("userDetails", friend.uid + "/friendRequests/" + userDetails.uid,
+     {name: userDetails.username, photo: userDetails.icon});
+     
+    console.log("request sent");
   } else {
     console.log("friend not found");
   }
 }
 
 /**************************************************************/
-// mm_acceptFriendRequest()
-// Accepts friend requests
-// Input:  n/a
+// mm_acceptFriendRequest(_uid, _name, _photo)
+// Accepts friend requests. Uses _uid, _name and _photo to put
+//   all of the required data into the database
+// Input:  _uid, _name, _photo
 // Return: n/a
 /**************************************************************/
-function mm_acceptFriendRequest(_friend) {
-  console.log("mm_acceptFriendRequest: _friend= " + _friend);
-  fb_delete("userDetails", userDetails.uid + "/friendRequests/" + _friend);
-  fb_write("userDetails", userDetails.uid + "/friends/" + _friend, _friend);
+function mm_acceptFriendRequest(_uid, _name, _photo) {
+  console.log("mm_acceptFriendRequest: _uid= " + _uid + " _friend: " + _name + " _photo: " + _photo);
+  fb_delete("userDetails", userDetails.uid + "/friendRequests/" + _uid);
+  fb_write("userDetails", userDetails.uid + "/friends/" + _uid, {name: _name, photo: _photo});
 }
 
 /**************************************************************/
-// mm_denyFriendRequest()
-// Accepts friend requests
-// Input:  n/a
+// mm_denyFriendRequest(_uid)
+// Denys friend requests from _uid
+// Input:  _uid
 // Return: n/a
 /**************************************************************/
-function mm_denyFriendRequest(_friend) {
-  console.log("mm_denyFriendRequest: _friend= " + _friend);
-  fb_delete("userDetails", userDetails.uid + "/friendRequests/" + _friend);
-  fb_delete("userDetails", _friend + "/friends/" + userDetails.uid);
+function mm_denyFriendRequest(_uid) {
+  console.log("mm_denyFriendRequest: _uid= " + _uid);
+  fb_delete("userDetails", userDetails.uid + "/friendRequests/" + _uid);
+  fb_delete("userDetails", _uid + "/friends/" + userDetails.uid);
 }
 
 /**************************************************************/
 // mm_checkFriends(_friends)
 // Checks for any friends
-// Input:  n/a
+// Called by fb_readOn at the start
+// Input:  _friends
 // Return: n/a
 /**************************************************************/
 function mm_checkFriends(_friends) {
   console.log("mm_checkFriends: _friends= " + JSON.stringify(_friends));
+  document.getElementById("d_friends").innerHTML = "";
 
   if (_friends == null) {
     console.log("no friends");
@@ -124,17 +148,41 @@ function mm_checkFriends(_friends) {
 /**************************************************************/
 // mm_checkFriendRequests(_friendRequests)
 // Checks for any friend requests
-// Input:  n/a
+// Called by fb_readOn at the start
+// Input:  _friendRequests
 // Return: n/a
 /**************************************************************/
 function mm_checkFriendRequests(_friendRequests) {
   console.log("mm_checkFriendRequests: _friendRequests= " + JSON.stringify(_friendRequests));
+  document.getElementById("d_friendRequests").innerHTML = "";
 
   if (_friendRequests == null) {
     console.log("no friend requests");
   } else {
-    for (i in _friendRequests) {
+    for (var i in _friendRequests) {
       im_createFriendIcon(_friendRequests[i], i, true);
     }
+  }
+}
+
+/**************************************************************/
+// mm_changeChat(_uid)
+// changes the chat
+// Input:  n/a
+// Return: n/a
+/**************************************************************/
+function mm_changeChat(_uid) {
+  fb_stopRead("messages", roomKey);
+
+  roomKey = _uid;
+
+  if (roomKey == "home") {
+  fb_readOn("messages", roomKey, function(_data) {
+            messageArray = _data;
+          });
+  } else {
+  fb_readOn("messages", userDetails.uid + roomKey, function(_data) {
+            messageArray = _data;
+          });
   }
 }

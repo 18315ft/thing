@@ -3,7 +3,7 @@
 // Written by Finn Thompson - Term 1/2 2021
 /**************************************************************/
 var userDetails;
-var roomKey;
+var roomKey = "home";
 
 function fb_setup() {
   fb_initialise();
@@ -68,8 +68,8 @@ async function fb_autoLogin() {
           userDetails = await fb_read("userDetails", userDetails.uid);
           document.getElementById("p_username").textContent = userDetails.username;
 
-          fb_readOn(roomKey, "messages", function(_data) {
-            messageArray = _data
+          fb_readOn("messages", roomKey, function(_data) {
+              messageArray = _data;
             });
 
           fb_readOn("userDetails", userDetails.uid +
@@ -79,7 +79,8 @@ async function fb_autoLogin() {
             "/friends", mm_checkFriends);
         }
       } else {
-        fb_redirectLogin();
+        im_showOnly("s_landingPage");
+        //fb_redirectLogin();
       }
     });
 }
@@ -154,24 +155,6 @@ async function fb_read(_path, _key) {
 }
 
 /**************************************************************/
-// fb_delete(_path, _key)
-// Write a specific record & key to the DB
-// Input:  path to write to, the key, data to write
-// Return: 
-/**************************************************************/
-function fb_delete(_path, _key) { 
-  console.log("fb_delete: _path= " + _path + "  _key= " + _key);
-  if (_path != null && _path != undefined && _key != null && _key != undefined) {
-    firebase.database().ref(_path + "/" + _key).remove(
-      function(error) {
-        if (error) {
-          console.log(error);
-        }
-      });
-  }
-}
-
-/**************************************************************/
 // fb_readOn(_path, _key, _data)
 // Read a specific DB record
 // Input:  path & key of record to read and where to save it
@@ -191,6 +174,37 @@ function fb_readOn(_path, _key, _return) {
   
   function readErr(error) {
     console.log(error);
+  }
+}
+
+/**************************************************************/
+// fb_readOn(_path, _key, _data)
+// Read a specific DB record
+// Input:  path & key of record to read and where to save it
+// Return:  
+/**************************************************************/
+function fb_stopRead(_path, _key) {	
+  console.log("fb_readOn: _path= " + _path + "  _key= " + _key);
+  var data;
+
+  firebase.database().ref(_path + "/" + _key).off;
+}
+
+/**************************************************************/
+// fb_delete(_path, _key)
+// Write a specific record & key to the DB
+// Input:  path to write to, the key, data to write
+// Return: 
+/**************************************************************/
+function fb_delete(_path, _key) { 
+  console.log("fb_delete: _path= " + _path + "  _key= " + _key);
+  if (_path != null && _path != undefined && _key != null && _key != undefined) {
+    firebase.database().ref(_path + "/" + _key).remove(
+      function(error) {
+        if (error) {
+          console.log(error);
+        }
+      });
   }
 }
 
@@ -231,10 +245,12 @@ async function fb_setAccountDetails(_inSettings) {
     tempObject.username = document.getElementById("i_settingsUsernameInput").value;
     tempObject.age = document.getElementById("i_settingsAgeInput").value;
     tempObject.gender = document.getElementById("i_settingsGenderInput").gender;
+    tempObject.icon = document.getElementById("sel_settingsIcon").value;
   } else {
     tempObject.username = document.getElementById("i_usernameInput").value;
     tempObject.age = document.getElementById("i_ageInput").value;
     tempObject.gender = document.getElementById("i_genderInput").value;
+    tempObject.icon = document.getElementById("sel_icon").value;
   }
 
   if (await fb_checkForUsername(tempObject.username)) {
@@ -248,9 +264,14 @@ async function fb_setAccountDetails(_inSettings) {
     return;
   }
 
+  if (tempObject.icon == "google") {
+    tempObject.icon = userDetails.photoURL;
+  }
+
   userDetails.username = tempObject.username;
   userDetails.age = tempObject.age;
   userDetails.gender = tempObject.gender;
+  userDetails.icon = tempObject.icon;
 
   fb_write("userDetails", userDetails.uid, userDetails);
   im_hide("s_register");
@@ -316,7 +337,7 @@ async function fb_checkForUsername(_name, _exceptions) {
 // fb_getDetailsOfUsername(_name)
 // Checks the database for the user
 // Input:  the name that it will search for
-// Return:  whether or not it has found that name
+// Return:  the details of the user that is found
 /**************************************************************/
 async function fb_getDetailsOfUsername(_name) {
   console.log("fb_getDetailsOfUsername: _name= " + _name);
@@ -332,6 +353,29 @@ async function fb_getDetailsOfUsername(_name) {
     }
   }
   console.log("didn't find user " + _name);
+  return(false);
+}
+
+/**************************************************************/
+// fb_getDetailsOfUID(_uid)
+// Checks the database for the user
+// Input:  the uid that it will search for
+// Return:  the details of the user that is found
+/**************************************************************/
+async function fb_getDetailsOfUID(_uid) {
+  console.log("fb_getDetailsOfUID: _uid= " + _uid);
+  var allUsers = await fb_read("userDetails", "");
+
+  if (allUsers != null) {
+    for (var i in allUsers) {
+      console.log(allUsers[i]);
+      if (allUsers[i].uid == _uid) {
+        console.log("returning user: " + allUsers[i]);
+        return(allUsers[i]);
+      }
+    }
+  }
+  console.log("didn't find user " + _uid);
   return(false);
 }
 /**************************************************************/

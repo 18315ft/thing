@@ -22,7 +22,6 @@
   <!-- Add Firebase products that you want to use -->
   <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-database.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-firestore.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-analytics.js"></script>
   <!-- firebase end ----------------------------------------------------------------->
 </head>
@@ -37,6 +36,30 @@
 <script defer src="mm_messageManager.js"></script>
 <script defer src="im_interfaceManager.js"></script>
 
+<!--Landing page-->
+<section id="s_landingPage">
+  <div id="d_landingPageGrid">
+    <div class="grey">
+      <h1>
+        How to play
+      </h1>
+
+    </div>
+    <div class="darkGrey">
+      <h1>
+        Blackjack
+      </h1>
+
+      <button onclick="fb_redirectLogin()">
+        Sign in
+      </button>
+
+      <button onclick="fb_redirectLogin()">
+        Register with google
+      </button>
+    </div>
+  </div>
+</section>
 
 <!--Game page-->
 <section id="s_gamePage">
@@ -46,18 +69,20 @@
     </div>
 
     <div id="d_sideBar" class="grey">
-      <div style="width: 100%; height: 40px; display: table;" onclick="console.log('pie')">
+      <button class="d_friendIconGrid" onclick="mm_changeChat('home')">
         <img src="homeIcon.png" class="icon">
-        <p style="display: table-cell; vertical-align: middle; padding-left: 5px;">Home</p>
-      </div>
-
+        <p class="friendName">Home</p>
+      </button>
       <br>
 
       <input type="text" id="i_findFriend">
       <button onclick="mm_sendFriendRequest()">Send friend request</button>
-      <br>
-      <label>Room key</label>
-      <input type="text" id="i_roomCode">
+      <div id="d_friendRequests">
+
+      </div>
+      <div id="d_friends">
+
+      </div>
     </div>
     
     <div id="d_canvasArea" style="background-color: #858585;">
@@ -104,6 +129,15 @@
         <label>Age</label>
         <input id="i_ageInput" type="number">
         <p id="p_ageStatus"></p>
+      </div>
+
+      <div>
+        <label>Profile Picture</label>
+        <select id="sel_icon">
+          <option value="google">Google Icon</option>
+          <option value="img_granny.jpg">
+            Granny</option>
+        </select>
       </div>
 
       <button id="b_signUp" onclick="fb_setAccountDetails()">Sign up</button>
@@ -199,7 +233,38 @@
   </section>
 -->
 
-
+  <!--*************************************************************
+			ADMIN PAGE 
+  **************************************************************-->
+  <section id="s_adminPage" class="w3-grey">
+    <div class="w3-row">
+      <div class="w3-container w3-grey w3-col m10">
+        <h1 class="w3-wide">Admin page</h1>
+      </div>
+    </div>
+    
+    <nav id="n_admin" class="w3-bar stickyNav">
+      <button id="b_adHome" class="w3-button w3-block w3-col m3 
+                                   w3-medium w3-ripple w3-border" 
+              onclick="ad_home()" value="Submit">home
+	  </button>
+      <button id="b_adUser" class="w3-button w3-block w3-col m3 
+                                   w3-medium w3-ripple w3-small w3-border" 
+              onclick="ad_user()" value="Submit">users
+      </button>
+      <button id="b_adBB" class="w3-button w3-block w3-col m3 
+                                 w3-medium w3-ripple w3-small w3-border" 
+              onclick="ad_BB()" value="Submit">BB
+      </button>
+    </nav>
+      
+    <div>
+      <div id="d_admin" class="w3-table-all w3-small w3-light-grey 
+                               w3-hoverable w3-border w3-bordered content">
+	    <table id="t_userData"></table>
+	  </div>
+    </div>
+  </section> 
 
 
 
