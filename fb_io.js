@@ -269,9 +269,14 @@ async function fb_setAccountDetails(_inSettings) {
   userDetails.age = tempObject.age;
   userDetails.gender = tempObject.gender;
   userDetails.icon = tempObject.icon;
+  userDetails.money = 100;
 
   for (var i in friends) {
     fb_write("userDetails", i + "/friends/" + userDetails.uid, {name: userDetails.username, photo: userDetails.icon});
+  }
+
+  if (!_inSettings) {
+    fb_autoLogin();
   }
 
   fb_write("userDetails", userDetails.uid, userDetails);
