@@ -18,11 +18,12 @@
 
   <!-- firebase start --------------------------------------------------------------->
   <!-- Firebase App (core Firebase SDK) is always required & must be listed 1st -->
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
   <!-- Add Firebase products that you want to use -->
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-database.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-analytics.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-analytics.js"></script>
   <!-- firebase end ----------------------------------------------------------------->
 </head>
 
@@ -30,7 +31,7 @@
 //  BODY
 *********************************************************************************-->
 <body>
-
+  
 <script defer src="fb_io.js"></script>
 <script defer src="mp_game.js"></script>
 <script defer src="mm_messageManager.js"></script>
@@ -51,44 +52,134 @@
 <p id="p_username"></p>-->
 <!--Game page-->
 <section id="s_gamePage">
-  <div class="grid">
+  <div id="d_gamePageGrid">
     <div class="w3-container darkGrey" style="grid-column-end: span 3;">
       header
     </div>
 
     <div class="grey">
-      <div class="normalDiv">
-        <img src="https://lh3.googleusercontent.com/proxy/4aPs71fdVvRvXQ1IZGjb941Ha8WbKWaOFITC7ctQkhxrnN3_a5Oo_BKKJAK5tMb61I7UeQ75Vx2C6XdRhE9wrEENI6hxxoIy9c_kvv-of9mjEXhH0j2d-AFE788LBriGCC59Wk9T01HzfarkLJHoJsc" style="width: 30px; height: 30px; border-radius: 100%; float: left; margin: 5px;">
-        <div style="margin-top: auto; margin-bottom: auto;">
-          <p style="margin-top: auto; margin-bottom: auto;">Home</p>
+      <div style="height: 40px; display: table;" onclick="console.log('pie')">
+        <img src="homeIcon.png" class="icon">
+        <p style="display: table-cell; vertical-align: middle; padding-left: 5px;">Home</p>
+      </div>
+
+      <div class="d_friendIconGrid">
+        <img src="homeIcon.png" class="icon" style="grid-row-end: span 2;">
+        <p class="friendName">Friend Name</p>
+        <p class="lastOnline">Online: 10/10/10 - 12:00 am</p>
+      </div>
+
+      <div class="d_friendIconGrid">
+        <img src="homeIcon.png" class="icon" style="grid-row-end: span 2;">
+        <p class="friendName">Friend Name</p>
+        <div>
+          <button class="friendRequestButton">Accept</button>
+          <button class="friendRequestButton">Deny</button>
         </div>
       </div>
-      
-      <p>Room key</p>
-      <input type="text" id="i_roomCode">
 
-      
+      <br>
+
+      <input type="text" id="i_findFriend">
+      <button onclick="mm_findFriend()">Find friend</button>
+      <button onclick="mm_checkFriends()">Check for friend requests</button>
+      <br>
+      <label>Room key</label>
+      <input type="text" id="i_roomCode">
     </div>
     
     <div id="d_canvasArea" style="background-color: #858585;">
     </div>
 
-    <div class="grey messagesGrid">
+    <div id="d_messagesGrid" class="grey">
       <p id="p_messageDisplay" style="grid-column-end: span 2;"></p>
-      <input type="text" id="i_messageInput" onkeypress="mm_enterPressed()">
+      <input type="text" id="i_messageInput" onkeypress="mm_keyPressed()">
       <button onclick="mm_sendMessage()">Send</button>
     </div>
 
     <div class="darkGrey" style="grid-column-end: span 3; padding: 10px;">
       <button onclick="fb_redirectLogin()">login</button>
       <button onclick="fb_logout()">logout</button>
+      <button onclick="im_show('s_settingsPage')">Settings</button>
+      <p id="p_username" style="display: inline"></p>
     </div>
+  </div>
+</section>
+
+<!--Register page-->
+<section id="s_register">
+  <div id="d_registerGrid">
+    <div class="grey" style="opacity: 0.8;"></div>
+
+    <div class="darkGrey" style="padding: 5px;">
+      <p style="font-size: 50px;">Sign up</p>
+      <br>
+
+      <div>
+        <label>Username</label>
+        <input id="i_registerUsernameInput">
+        <p id="p_usernameStatus"></p>
+      </div>
+      <br>
+
+      <div>
+        <label>Gender</label>
+        <input id="i_registerGenderInput">
+      </div>
+      <br>
+
+      <div>
+        <label>Age</label>
+        <input id="i_ageInput" type="number">
+        <p id="p_ageStatus"></p>
+      </div>
+
+      <button id="b_signUp" onclick="fb_setAccountDetails()">Sign up</button>
+    </div>
+    
+    <div class="grey" style="opacity: 0.8;"></div>
   </div>
 </section>
 
 <!--Settings page-->
 <section id="s_settingsPage">
-<div>
+  <div id="d_settingsGrid">
+    <div class="grey" style="opacity: 0.8;"></div>
+
+    <div class="darkGrey" style="padding: 5px;">
+      <p style="font-size: 50px;">Change details</p>
+      <br>
+
+      <div>
+        <label>Username</label>
+        <input id="i_usernameInput">
+        <p id="p_usernameStatus"></p>
+      </div>
+      <br>
+
+      <div>
+        <label>Gender</label>
+        <input id="i_genderInput">
+      </div>
+      <br>
+
+      <div>
+        <label>Age</label>
+        <input id="i_ageInput" type="number">
+        <p id="p_ageStatus"></p>
+      </div>
+
+      <div>
+        <label>Icon</label>
+        <input id="i_icon" type="file">
+        <button onclick="fb_upload('userDetails', userDetails.uid + '/icon', 'i_icon')">upload image</button>
+      </div>
+      
+      <button id="b_changeDetails" onclick="fb_setAccountDetails()">Change details</button>
+    </div>
+    
+    <div class="grey" style="opacity: 0.8;"></div>
+  </div>
 </section>
 
 <!--
