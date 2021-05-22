@@ -1,11 +1,11 @@
 /**************************************************************/
 // fb_io.js
-// Written by ???   2021
+// Written by Finn Thompson - Term 1/2 2021
 /**************************************************************/
 var userDetails;
 var roomKey;
 
-async function fb_setup() {
+function fb_setup() {
   fb_initialise();
 
   userDetails = {
@@ -14,7 +14,8 @@ async function fb_setup() {
     name:     "",
     photoURL: ""
   };
-  await fb_autoLogin();
+
+  fb_autoLogin();
 }
 
 /**************************************************************/
@@ -39,7 +40,6 @@ function fb_initialise() {
 
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
-  console.log(firebase);
 }
 
 /**************************************************************/
@@ -48,7 +48,7 @@ function fb_initialise() {
 // Input:  n/a
 // Return: n/a
 /**************************************************************/
-function fb_autoLogin() {
+async function fb_autoLogin() {
   console.log('fb_autoLogin');
   var userRegistered;
 
@@ -65,8 +65,18 @@ function fb_autoLogin() {
           im_show("s_register");
         } else {
           console.log("user registered");
-          userDetails =  await fb_asyncRead("userDetails", userDetails.uid);
+          userDetails = await fb_read("userDetails", userDetails.uid);
           document.getElementById("p_username").textContent = userDetails.username;
+
+          fb_readOn(roomKey, "messages", function(_data) {
+            messageArray = _data
+            });
+
+          fb_readOn("userDetails", userDetails.uid +
+            "/friendRequests", mm_checkFriendRequests);
+
+          fb_readOn("userDetails", userDetails.uid +
+            "/friends", mm_checkFriends);
         }
       } else {
         fb_redirectLogin();
@@ -85,7 +95,6 @@ function fb_redirectLogin() {
   firebase.auth().onAuthStateChanged(newLogin);
   
   function newLogin(user) {
-      
     var provider = new firebase.auth.GoogleAuthProvider();
     firebase.auth().signInWithRedirect(provider);
   }
@@ -110,6 +119,7 @@ function fb_logout() {
 /**************************************************************/
 function fb_write(_path, _key, _data) { 
   console.log("fb_write: _path= " + _path + "  _key= " + _key + "  _data= " + _data);
+
   if (_path != null && _path != undefined && _key != null && _key != undefined) {
     firebase.database().ref(_path + "/" + _key).set(_data,
       function(error) {
@@ -121,13 +131,13 @@ function fb_write(_path, _key, _data) {
 }
 
 /**************************************************************/
-// fb_asyncRead(_path, _key)
+// fb_read(_path, _key)
 // Read a specific DB record
 // Input:  path & key of record to read and where to save it
 // Return:  
 /**************************************************************/
-async function fb_asyncRead(_path, _key) {	
-  console.log("fb_asyncRead: _path= " + _path + "  _key= " + _key)
+async function fb_read(_path, _key) {	
+  console.log("fb_read: _path= " + _path + "  _key= " + _key);
   var data
 
   await firebase.database().ref(_path + "/" + _key).once("value", gotRecord, readErr);
@@ -136,7 +146,6 @@ async function fb_asyncRead(_path, _key) {
     console.log(snapshot.val());
     data = snapshot.val();
   }
-
   return(data);
  
   function readErr(error) {
@@ -145,42 +154,15 @@ async function fb_asyncRead(_path, _key) {
 }
 
 /**************************************************************/
-// fb_read(_path, _key)
-// Read a specific DB record
-// Input:  path & key of record to read and where to save it
-// Return:  
-/**************************************************************/
-function fb_read(_path, _key) {	
-  console.log("fb_read: _path= " + _path + "  _key= " + _key)
-  var data
-
-  firebase.database().ref(_path + "/" + _key).once("value", gotRecord, readErr);
-
-  function gotRecord(snapshot) {
-    console.log(snapshot.val());
-    data = snapshot.val();
-  }
-
-  return(data);
- 
-  function readErr(error) {
-    console.log(error);
-  }
-}
-
-/**************************************************************/
-// fb_upload(_path, _key, _input)
+// fb_delete(_path, _key)
 // Write a specific record & key to the DB
 // Input:  path to write to, the key, data to write
 // Return: 
 /**************************************************************/
-function fb_upload(_path, _key, _input) { 
-  console.log("fb_upload: _path= " + _path + "  _key= " + _key + "  _input= " + _input);
+function fb_delete(_path, _key) { 
+  console.log("fb_delete: _path= " + _path + "  _key= " + _key);
   if (_path != null && _path != undefined && _key != null && _key != undefined) {
-    var file = document.getElementById(_input).files[0];
-    var storageRef = firebase.storage().ref(_path + "/" + _key);
-
-    storageRef.put(file,
+    firebase.database().ref(_path + "/" + _key).remove(
       function(error) {
         if (error) {
           console.log(error);
@@ -190,25 +172,85 @@ function fb_upload(_path, _key, _input) {
 }
 
 /**************************************************************/
+// fb_readOn(_path, _key, _data)
+// Read a specific DB record
+// Input:  path & key of record to read and where to save it
+// Return:  
+/**************************************************************/
+function fb_readOn(_path, _key, _return) {	
+  console.log("fb_readOn: _path= " + _path + "  _key= " + _key);
+  var data;
+
+  firebase.database().ref(_path + "/" + _key).on("value", gotRecord, readErr);
+
+  function gotRecord(snapshot) {
+    console.log("gotRecord: snapshot.val= " + snapshot.val());
+    console.log(_return);
+    _return(snapshot.val());
+  }
+  
+  function readErr(error) {
+    console.log(error);
+  }
+}
+
+/**************************************************************/
+// fb_detach(_path, _key, _data)
+// Detaches a listener from th DB
+// Input:  path & key of listener
+// Return:  
+/**************************************************************/
+async function fb_readOn(_path, _key, _return) {	
+  console.log("fb_readOn: _path= " + _path + "  _key= " + _key);
+  var data;
+
+  await firebase.database().ref(_path + "/" + _key).on("value", gotRecord, readErr);
+
+  function gotRecord(snapshot) {
+    console.log("gotRecord: snapshot.val= " + snapshot.val());
+    console.log(_return);
+    _return(snapshot.val());
+  }
+  
+  function readErr(error) {
+    console.log(error);
+  }
+}
+
+/**************************************************************/
 // fb_setAccountDetails()
 // Uploads account details to firebase
 // Input:  n/a
 // Return: n/a
 /**************************************************************/
-async function fb_setAccountDetails() {
-  console.log("fb_register");
-  userDetails.username = document.getElementById("i_usernameInput").value;
-  userDetails.age = document.getElementById("i_ageInput").value;
+async function fb_setAccountDetails(_inSettings) {
+  console.log("fb_setAccountDetails");
+  var tempObject = {username: "", age: "", gender: ""};
 
-  if (await fb_checkForUsername(userDetails.username)) {
+  if (_inSettings) {
+    tempObject.username = document.getElementById("i_settingsUsernameInput").value;
+    tempObject.age = document.getElementById("i_settingsAgeInput").value;
+    tempObject.gender = document.getElementById("i_settingsGenderInput").gender;
+  } else {
+    tempObject.username = document.getElementById("i_usernameInput").value;
+    tempObject.age = document.getElementById("i_ageInput").value;
+    tempObject.gender = document.getElementById("i_genderInput").value;
+  }
+
+  if (await fb_checkForUsername(tempObject.username)) {
     document.getElementById("p_usernameStatus").textContent = "Username is taken";
     return;
   }
 
-  if (userDetails.age < 13) {
+  
+  if (tempObject.age < 13) {
     document.getElementById("p_ageStatus").textContent = "You must be 13 or over to use this website";
     return;
   }
+
+  userDetails.username = tempObject.username;
+  userDetails.age = tempObject.age;
+  userDetails.gender = tempObject.gender;
 
   fb_write("userDetails", userDetails.uid, userDetails);
   im_hide("s_register");
@@ -222,7 +264,9 @@ async function fb_setAccountDetails() {
 /**************************************************************/
 async function fb_checkForUserUID(_uid) {
   console.log("fb_checkForUserUID: _uid= " + _uid);
-  var allUsers = await fb_asyncRead("userDetails", "");
+  var allUsers = await fb_read("userDetails", "");
+  console.log(allUsers);
+
   if (allUsers != null) {
     var allUserKeys = Object.keys(allUsers);
 
@@ -243,16 +287,24 @@ async function fb_checkForUserUID(_uid) {
 // Input:  the name that it will search for
 // Return:  whether or not it has found that name
 /**************************************************************/
-async function fb_checkForUsername(_name) {
+async function fb_checkForUsername(_name, _exceptions) {
   console.log("fb_checkForUsername: _name= " + _name);
-  var allUsers = await fb_asyncRead("userDetails", "");
+  var allUsers = await fb_read("userDetails", "");
 
   if (allUsers != null) {
     for (var i in allUsers) {
       console.log(allUsers[i]);
       if (allUsers[i].username == _name) {
-        console.log("found user " + _name);
-        return(true);
+        if (function() {
+          for (var x = 0; x < _exceptions.length; x++) {
+            if (allUsers[i].username == _exceptions[x]) {
+              return(false);
+            }
+          }
+        }) {
+          console.log("found user " + _name);
+          return(true);
+        }
       }
     }
   }
@@ -268,12 +320,13 @@ async function fb_checkForUsername(_name) {
 /**************************************************************/
 async function fb_getDetailsOfUsername(_name) {
   console.log("fb_getDetailsOfUsername: _name= " + _name);
-  var allUsers = await fb_asyncRead("userDetails", "");
+  var allUsers = await fb_read("userDetails", "");
 
   if (allUsers != null) {
     for (var i in allUsers) {
       console.log(allUsers[i]);
       if (allUsers[i].username == _name) {
+        console.log("returning user: " + allUsers[i]);
         return(allUsers[i]);
       }
     }

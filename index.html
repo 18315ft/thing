@@ -36,20 +36,8 @@
 <script defer src="mp_game.js"></script>
 <script defer src="mm_messageManager.js"></script>
 <script defer src="im_interfaceManager.js"></script>
-<!--
 
-<button onclick="mp_sendMessage()">Message</button>
-<button onclick="mp_clearMessages()">Clear Messages</button>
 
-<p id="p_messages"></p>
-
-<input type="text" id="i_roomCode">
-
-<button onclick="mp_redirectLogin()">Login</button>
-
-<button onclick="fb_logout()">Log out</button>
-
-<p id="p_username"></p>-->
 <!--Game page-->
 <section id="s_gamePage">
   <div id="d_gamePageGrid">
@@ -57,32 +45,16 @@
       header
     </div>
 
-    <div class="grey">
-      <div style="height: 40px; display: table;" onclick="console.log('pie')">
+    <div id="d_sideBar" class="grey">
+      <div style="width: 100%; height: 40px; display: table;" onclick="console.log('pie')">
         <img src="homeIcon.png" class="icon">
         <p style="display: table-cell; vertical-align: middle; padding-left: 5px;">Home</p>
-      </div>
-
-      <div class="d_friendIconGrid">
-        <img src="homeIcon.png" class="icon" style="grid-row-end: span 2;">
-        <p class="friendName">Friend Name</p>
-        <p class="lastOnline">Online: 10/10/10 - 12:00 am</p>
-      </div>
-
-      <div class="d_friendIconGrid">
-        <img src="homeIcon.png" class="icon" style="grid-row-end: span 2;">
-        <p class="friendName">Friend Name</p>
-        <div>
-          <button class="friendRequestButton">Accept</button>
-          <button class="friendRequestButton">Deny</button>
-        </div>
       </div>
 
       <br>
 
       <input type="text" id="i_findFriend">
-      <button onclick="mm_findFriend()">Find friend</button>
-      <button onclick="mm_checkFriends()">Check for friend requests</button>
+      <button onclick="mm_sendFriendRequest()">Send friend request</button>
       <br>
       <label>Room key</label>
       <input type="text" id="i_roomCode">
@@ -117,14 +89,14 @@
 
       <div>
         <label>Username</label>
-        <input id="i_registerUsernameInput">
+        <input id="i_usernameInput">
         <p id="p_usernameStatus"></p>
       </div>
       <br>
 
       <div>
         <label>Gender</label>
-        <input id="i_registerGenderInput">
+        <input id="i_genderInput">
       </div>
       <br>
 
@@ -152,30 +124,24 @@
 
       <div>
         <label>Username</label>
-        <input id="i_usernameInput">
+        <input id="i_settingsUsernameInput">
         <p id="p_usernameStatus"></p>
       </div>
       <br>
 
       <div>
         <label>Gender</label>
-        <input id="i_genderInput">
+        <input id="i_settingsGenderInput">
       </div>
       <br>
 
       <div>
         <label>Age</label>
-        <input id="i_ageInput" type="number">
+        <input id="i_settingsAgeInput" type="number">
         <p id="p_ageStatus"></p>
       </div>
-
-      <div>
-        <label>Icon</label>
-        <input id="i_icon" type="file">
-        <button onclick="fb_upload('userDetails', userDetails.uid + '/icon', 'i_icon')">upload image</button>
-      </div>
       
-      <button id="b_changeDetails" onclick="fb_setAccountDetails()">Change details</button>
+      <button id="b_changeDetails" onclick="fb_setAccountDetails(true)">Change details</button>
     </div>
     
     <div class="grey" style="opacity: 0.8;"></div>

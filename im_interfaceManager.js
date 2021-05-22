@@ -1,19 +1,22 @@
+/**************************************************************/
+// im_interfaceManager.js
+// Written by Finn Thompson - Term 1/2 2021
+/**************************************************************/
 var canvas;
 var canvasArea = document.getElementById("d_canvasArea");;
 var gamePage = document.getElementById("s_gamePage");
 var registerPage = document.getElementById("s_register");
 var settingsPage = document.getElementById("s_settingsPage");
 
-async function setup() {
-  await fb_setup();
-
-
+function setup() {
   frameRate(5);
   im_showOnly("s_gamePage");
   canvas = createCanvas(canvasArea.offsetWidth, canvasArea.offsetHeight - 1);
   canvas.parent("d_canvasArea");
-
   
+  fb_setup();
+
+  roomKey = "testGame/" + document.getElementById("i_roomCode").value;
 }
 
 function draw() {
@@ -77,31 +80,31 @@ function im_showOnly(_id, _displayType) {
 }
 
 /**************************************************************/
-// im_createFriendIcon(_uid, _request)
-// Creates a icon for the user with _uid
-// Input:  _uid
+// im_createFriendIcon(_name, _request)
+// Creates a icon for the user with _name
+// Input:  _name
 // Return: n/a
 /**************************************************************/
-function im_createFriendIcon(_uid, _request) {
-  var mainDiv = document.createElement("div");
-  var image = document.createElement("img");
-  var personName = document.createElement("p");
-  var buttonsDiv = document.createElement("div");
-  var accept = document.createElement("button");
-  var deny = document.createElement("button");
+async function im_createFriendIcon(_name, _uid, _request) {
+  console.log("im_createFriendIcon: _name= " + _name + " _request= " + _request);
+  var sideBar = document.getElementById("d_sideBar");
 
-  mainDiv.class = "d_friendIconGrid";
-  image.class = "icon";
-  personName.class = "friendName";
-  accept.class = "friendRequestButton";
-  deny.class = "friendRequestButton";
+  if (_request == true) {
+    sideBar.innerHTML += '<div class="d_friendIconGrid">'
+      + '<img src="homeIcon.png" class="icon" style="grid-row-end: span 2;">'
+      + '<p class="friendName">' + _name + '</p> <div>'
+      + '<button class="friendRequestButton" onclick="mm_acceptFriendRequest(' + "'" + _uid + "'" + ')">Accept</button>'
+      + '<button class="friendRequestButton" onclick="mm_denyFriendRequest(' + "'" + _uid + "'" + ')">Deny</button> </div> </div>';
+  } else {
+    sideBar.innerHTML += '<div class="d_friendIconGrid">'
+        + '<img src="homeIcon.png" class="icon" style="grid-row-end: span 2;">'
+        + '<p class="friendName">' + _name + '</p>'
+      + '</div>';
+  }
 }
-
+/*
       <div class="d_friendIconGrid">
         <img src="homeIcon.png" class="icon" style="grid-row-end: span 2;">
         <p class="friendName">Friend Name</p>
-        <div>
-          <button class="friendRequestButton">Accept</button>
-          <button class="friendRequestButton">Deny</button>
-        </div>
-      </div>
+        <p class="lastOnline">Online: 10/10/10 - 12:00 am</p>
+      </div>*/

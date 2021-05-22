@@ -78,6 +78,7 @@ button {
   grid-template-columns: 40px auto;
   grid-template-rows: auto auto;
   height: 40px;
+  margin-top: 5px;
 }
 
 .icon {
